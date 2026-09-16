@@ -22,8 +22,8 @@ begin
    -- TEST 1 — Is_Valid_Mapping
    Put_Line ("TEST 1 — Is_Valid_Mapping");
    declare
-      Map_Ok  : Virtual_Mapping (1 .. 5) := (1, 2, 3, 2, 1);
-      Map_Bad : Virtual_Mapping (1 .. 5) := (1, 2, 99, 2, 1);
+      Map_Ok  : Virtual_Mapping (1 .. 5) := [1, 2, 3, 2, 1];
+      Map_Bad : Virtual_Mapping (1 .. 5) := [1, 2, 99, 2, 1];
    begin
       Check ("1.1 Valid mapping within limits", Is_Valid_Mapping (Map_Ok, 10));
       Check ("1.2 Invalid mapping detected correctly", not Is_Valid_Mapping (Map_Bad, 10));
@@ -33,7 +33,7 @@ begin
    -- TEST 2 — Get_Stop_Index
    Put_Line ("TEST 2 — Get_Stop_Index");
    declare
-      Map : Virtual_Mapping (1 .. 3) := (10, 20, 30);
+      Map : Virtual_Mapping (1 .. 3) := [10, 20, 30];
    begin
       Check ("2.1 Lower bound RNG mapping", Get_Stop_Index (Map, 1) = 10);
       Check ("2.2 Middle RNG mapping", Get_Stop_Index (Map, 2) = 20);
@@ -47,7 +47,7 @@ begin
       Win : Symbol_Array (1 .. 3);
    begin
       R.Length := 5;
-      R.Symbols (1 .. 5) := (Cherry, Lemon, Orange, Plum, Bell);
+      R.Symbols (1 .. 5) := [Cherry, Lemon, Orange, Plum, Bell];
       Win := Get_Visible_Window (R, 2, 3);
       Check ("3.1 First visible symbol", Win (1) = Lemon);
       Check ("3.2 Second visible symbol", Win (2) = Orange);
@@ -61,7 +61,7 @@ begin
       Win : Symbol_Array (1 .. 3);
    begin
       R.Length := 4;
-      R.Symbols (1 .. 4) := (Cherry, Lemon, Orange, Plum);
+      R.Symbols (1 .. 4) := [Cherry, Lemon, Orange, Plum];
       Win := Get_Visible_Window (R, 3, 3);
       Check ("4.1 Pre-wrap symbol", Win (1) = Orange);
       Check ("4.2 Wrap point symbol", Win (2) = Plum);
@@ -72,13 +72,13 @@ begin
    Put_Line ("TEST 5 — Generate_Grid");
    declare
       R_Arr : Reel_Def_Array (1 .. 2);
-      Stops : Stop_Array (1 .. 2) := (1, 2);
+      Stops : Stop_Array (1 .. 2) := [1, 2];
       Grid  : Reel_Grid (1 .. 2, 1 .. 2);
    begin
       R_Arr (1).Length := 3;
-      R_Arr (1).Symbols (1 .. 3) := (Cherry, Cherry, Cherry);
+      R_Arr (1).Symbols (1 .. 3) := [Cherry, Cherry, Cherry];
       R_Arr (2).Length := 3;
-      R_Arr (2).Symbols (1 .. 3) := (Lemon, Lemon, Lemon);
+      R_Arr (2).Symbols (1 .. 3) := [Lemon, Lemon, Lemon];
       Grid := Generate_Grid (R_Arr, Stops, 2);
       Check ("5.1 Grid top-left matches reel 1", Grid (1, 1) = Cherry);
       Check ("5.2 Grid top-right matches reel 2", Grid (2, 1) = Lemon);
@@ -88,33 +88,33 @@ begin
    -- TEST 6 — Evaluate_Line_Classic (Wins)
    Put_Line ("TEST 6 — Evaluate_Line_Classic (Wins)");
    begin
-      Check ("6.1 Cherry win calculation", Evaluate_Line_Classic ((Cherry, Cherry, Cherry), 10) = 100);
-      Check ("6.2 Seven jackpot calculation", Evaluate_Line_Classic ((Seven, Seven, Seven), 5) = 500);
-      Check ("6.3 Bar win calculation", Evaluate_Line_Classic ((Bar, Bar, Bar), 2) = 100);
+      Check ("6.1 Cherry win calculation", Evaluate_Line_Classic ([Cherry, Cherry, Cherry], 10) = 100);
+      Check ("6.2 Seven jackpot calculation", Evaluate_Line_Classic ([Seven, Seven, Seven], 5) = 500);
+      Check ("6.3 Bar win calculation", Evaluate_Line_Classic ([Bar, Bar, Bar], 2) = 100);
    end;
 
    -- TEST 7 — Evaluate_Line_Classic (Losses & Non-matches)
    Put_Line ("TEST 7 — Evaluate_Line_Classic (Losses)");
    begin
-      Check ("7.1 Mixed symbols returns 0", Evaluate_Line_Classic ((Cherry, Lemon, Cherry), 10) = 0);
-      Check ("7.2 Single differing symbol returns 0", Evaluate_Line_Classic ((Seven, Seven, Bar), 10) = 0);
-      Check ("7.3 Blank spaces return 0", Evaluate_Line_Classic ((Blank, Blank, Blank), 10) = 0);
+      Check ("7.1 Mixed symbols returns 0", Evaluate_Line_Classic ([Cherry, Lemon, Cherry], 10) = 0);
+      Check ("7.2 Single differing symbol returns 0", Evaluate_Line_Classic ([Seven, Seven, Bar], 10) = 0);
+      Check ("7.3 Blank spaces return 0", Evaluate_Line_Classic ([Blank, Blank, Blank], 10) = 0);
    end;
 
    -- TEST 8 — Evaluate_Line_Wild (Substitutions)
    Put_Line ("TEST 8 — Evaluate_Line_Wild");
    begin
-      Check ("8.1 Wild substitutes correctly for Cherry", Evaluate_Line_Wild ((Wild, Cherry, Cherry), 10) = 100);
-      Check ("8.2 Line of all Wilds pays special jackpot", Evaluate_Line_Wild ((Wild, Wild, Wild), 10) = 5000);
-      Check ("8.3 Wild fails to substitute for mixed symbols", Evaluate_Line_Wild ((Wild, Cherry, Lemon), 10) = 0);
+      Check ("8.1 Wild substitutes correctly for Cherry", Evaluate_Line_Wild ([Wild, Cherry, Cherry], 10) = 100);
+      Check ("8.2 Line of all Wilds pays special jackpot", Evaluate_Line_Wild ([Wild, Wild, Wild], 10) = 5000);
+      Check ("8.3 Wild fails to substitute for mixed symbols", Evaluate_Line_Wild ([Wild, Cherry, Lemon], 10) = 0);
    end;
 
    -- TEST 9 — Evaluate_Scatter (Global appearance)
    Put_Line ("TEST 9 — Evaluate_Scatter");
    declare
-      Grid_None  : Reel_Grid (1 .. 3, 1 .. 3) := (others => (others => Blank));
-      Grid_Three : Reel_Grid (1 .. 3, 1 .. 3) := (others => (others => Blank));
-      Grid_Five  : Reel_Grid (1 .. 3, 1 .. 3) := (others => (others => Scatter));
+      Grid_None  : Reel_Grid (1 .. 3, 1 .. 3) := [others => [others => Blank]];
+      Grid_Three : Reel_Grid (1 .. 3, 1 .. 3) := [others => [others => Blank]];
+      Grid_Five  : Reel_Grid (1 .. 3, 1 .. 3) := [others => [others => Scatter]];
    begin
       Grid_Three (1, 1) := Scatter; 
       Grid_Three (2, 2) := Scatter; 
@@ -128,13 +128,13 @@ begin
    -- TEST 10 — Calculate_Line_Hit_Odds
    Put_Line ("TEST 10 — Calculate_Line_Hit_Odds");
    declare
-      Lens   : constant Length_Array (1 .. 3) := (10, 10, 10);
-      Counts : constant Count_Array (1 .. 3) := (1, 1, 1);
-      Zero_C : constant Count_Array (1 .. 3) := (1, 0, 1);
+      Lens   : constant Length_Array (1 .. 3) := [10, 10, 10];
+      Counts : constant Count_Array (1 .. 3) := [1, 1, 1];
+      Zero_C : constant Count_Array (1 .. 3) := [1, 0, 1];
    begin
       Check ("10.1 Typical 1 in 1000 probability", abs (Calculate_Line_Hit_Odds (Lens, Counts) - 0.001) < 0.0001);
       Check ("10.2 Zero chance when a symbol is missing", Calculate_Line_Hit_Odds (Lens, Zero_C) = 0.0);
-      Check ("10.3 Guaranteed chance when all stops match", Calculate_Line_Hit_Odds (Lens, (10, 10, 10)) = 1.0);
+      Check ("10.3 Guaranteed chance when all stops match", Calculate_Line_Hit_Odds (Lens, [10, 10, 10]) = 1.0);
    end;
 
    -- TEST 11 — Calculate_Expected_Value
@@ -149,7 +149,7 @@ begin
    Put_Line ("TEST 12 — Evaluate_Multi_Line");
    declare
       Grid  : Reel_Grid (1 .. 3, 1 .. 3);
-      Lines : Payline_Array (1 .. 3);
+      Lines : Payline_Array (1 .. 3, 1 .. 3);
    begin
       -- Setup Video Slot Grid Layout
       Grid (1, 1) := Cherry; Grid (1, 2) := Cherry; Grid (1, 3) := Cherry;
@@ -157,9 +157,9 @@ begin
       Grid (3, 1) := Orange; Grid (3, 2) := Plum;   Grid (3, 3) := Blank;
 
       -- Horizontal Paylines
-      Lines (1) := (1, 1, 1); -- (Cherry, Lemon, Orange)
-      Lines (2) := (2, 2, 2); -- (Cherry, Bar, Plum)
-      Lines (3) := (3, 3, 3); -- (Cherry, Seven, Blank)
+      Lines := [[1, 1, 1],
+                [2, 2, 2],
+                [3, 3, 3]];
 
       Check ("12.1 Mixed lines yield 0", Evaluate_Multi_Line (Grid, Lines, 10) = 0);
 
@@ -180,7 +180,7 @@ begin
    -- TEST 13 — Exception and Precondition Constraints
    Put_Line ("TEST 13 — Constraints and Error Handling");
    declare
-      Map : constant Virtual_Mapping (1 .. 5) := (1, 2, 3, 4, 5);
+      Map : constant Virtual_Mapping (1 .. 5) := [1, 2, 3, 4, 5];
       Got_Error_1 : Boolean := False;
       Got_Error_2 : Boolean := False;
       Got_Error_3 : Boolean := False;
@@ -196,8 +196,8 @@ begin
 
       begin
          declare
-            Lens   : constant Length_Array (1 .. 3) := (10, 10, 10);
-            Counts : constant Count_Array (1 .. 2) := (1, 1);
+            Lens   : constant Length_Array (1 .. 3) := [10, 10, 10];
+            Counts : constant Count_Array (1 .. 2) := [1, 1];
          begin
             if Calculate_Line_Hit_Odds (Lens, Counts) = 0.0 then -- precondition failure
                Got_Error_2 := False;
