@@ -163,14 +163,13 @@ package body Slot_Machine is
       Total_Win : Payout_Amount := 0;
    begin
       -- Evaluate each defined payline independently and sum the payouts
-      for I in Lines'Range loop
+      for I in Lines'Range (1) loop
          declare
-            Path : constant Payline_Path := Lines (I);
-            Line : Symbol_Array (1 .. Path'Length);
+            Line : Symbol_Array (1 .. Lines'Length (2));
             Idx  : Positive := 1;
          begin
-            for C in Path'Range loop
-               Line (Idx) := Grid (C, Path (C));
+            for C in Lines'Range (2) loop
+               Line (Idx) := Grid (C, Lines (I, C));
                Idx := Idx + 1;
             end loop;
             Total_Win := Total_Win + Evaluate_Line_Wild (Line, Bet);
