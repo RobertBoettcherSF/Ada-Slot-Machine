@@ -18,7 +18,7 @@ is
 
    -- Definition of a reel including its actual length up to the maximum stops
    type Reel_Def is record
-      Symbols : Reel_Strip_Array := (others => Blank);
+      Symbols : Reel_Strip_Array := [others => Blank];
       Length  : Reel_Stop_Index := 1;
    end record;
 
@@ -34,9 +34,8 @@ is
    -- Grid for video slots (columns are reels, rows are visible symbols)
    type Reel_Grid is array (Reel_Count range <>, Row_Count range <>) of Symbol_ID;
    
-   -- Payline defined by which row is evaluated on each reel column
-   type Payline_Path is array (Reel_Count range <>) of Row_Count;
-   type Payline_Array is array (Positive range <>) of Payline_Path;
+   -- Paylines defined as a 2D array of (Payline_Index, Reel_Column) yielding the Row_Count
+   type Payline_Array is array (Positive range <>, Reel_Count range <>) of Row_Count;
 
    -- Arrays for probability calculations
    type Length_Array is array (Positive range <>) of Positive;
